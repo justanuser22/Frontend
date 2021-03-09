@@ -1,0 +1,486 @@
+<div class="main-content page-m">
+    <div class="section-content section-content-p30">
+        <div class="container-fluid">
+            <form [formGroup]="checkoutFormGroup" (ngSubmit)="onSubmit()">
+                <!--Form group para el 'Customer'-->
+                <div formGroupName="customer" class="form-area">
+                    <h3>Customer</h3>
+                    <div class="row">
+                        <div class="col-md-2"><label>First Name</label></div>
+                        <div class="col-md-9">
+                            <div class="input-space">
+                                <input formControlName="firstName" type="text">
+                                <!-- validator method dirty=did user change field value, touched=did user change fields -->
+                                <!--Errores de validación-->
+                                <!--
+                                        * invalid -> Hace referencia a si las validaciones fallaron.
+                                        * notOnlyWhiteSpace -> Método creado específicamente para corroborar que no se ingresen solo espacios vacíos.
+                                        * dirty -> Hace referencia a si el usuario cambio el valor del campo de texto.
+                                        * touched -> Hace referencia a si el campo perdió foco.
+                                    -->
+                                <div *ngIf="firstName.invalid && (firstName.dirty || firstName.touched)"
+                                    class="alert alert-danger mt-1">
+                                    <div *ngIf="firstName.errors.required || firstName.errors.notOnlyWhitespace">
+                                        First Name is required
+                                    </div>
+                                    <div *ngIf="firstName.errors.minlength">
+                                        First Name must be at least 2 characters long
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-2"><label>Last Name</label></div>
+                        <div class="col-md-9">
+                            <div class="input-space">
+                                <input formControlName="lastName" type="text">
+                                <!-- validator method dirty=did user change field value, touched=did user change fields -->
+                                <!--Errores de validación-->
+                                <!--
+                                        * invalid -> Hace referencia a si las validaciones fallaron.
+                                        * notOnlyWhiteSpace -> Método creado específicamente para corroborar que no se ingresen solo espacios vacíos.
+                                        * dirty -> Hace referencia a si el usuario cambio el valor del campo de texto.
+                                        * touched -> Hace referencia a si el campo perdió foco.
+                                    -->
+                                <div *ngIf="lastName.invalid && (lastName.dirty || lastName.touched)"
+                                    class="alert alert-danger mt-1">
+                                    <div *ngIf="lastName.errors.required || firstName.errors.notOnlyWhitespace">
+                                        Last Name is required
+                                    </div>
+                                    <div *ngIf="lastName.errors.minlength">
+                                        Last Name must be at least 2 characters long
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-2"><label>Email</label></div>
+                        <div class="col-md-9">
+                            <div class="input-space">
+                                <input formControlName="email" type="text">
+                                <!-- validator method dirty=did user change field value, touched=did user change fields -->
+                                <!--Errores de validación-->
+                                <!--
+                                        * invalid -> Hace referencia a si las validaciones fallaron.
+                                        * dirty -> Hace referencia a si el usuario cambio el valor del campo de texto.
+                                        * touched -> Hace referencia a si el campo perdió foco.
+                                    -->
+                                <div *ngIf="email.invalid && (email.dirty || email.touched)"
+                                    class="alert alert-danger mt-1">
+                                    <div *ngIf="email.errors.required">
+                                        Email is required
+                                    </div>
+                                    <div *ngIf="email.errors.pattern">
+                                        Email must be valid email address format
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--Form group para el 'Shipping Address'-->
+                <!--
+                    Es importante aclarar que 'country' y 'state' son dependientes.
+                    Esto quiere decir, que una vez que hayamos seleccionado un país,
+                    gracias al código de este, se procederán a desplegar los estados
+                    que correspondan al que hemos seleccionado.
+                -->
+                <div formGroupName="shippingAddress" class="form-area">
+                    <h3>Shipping Address</h3>
+                    <div class="row">
+                        <div class="col-md-2"><label>Country</label></div>
+                        <div class="col-md-9">
+                            <div class="input-space">
+                                <select formControlName="country" (change)="populateStates('shippingAddress')">
+                                    <!-- ngValue is the country code used by the States dropdown method -->
+                                    <option *ngFor="let country of countries" [ngValue]="country">
+                                        {{ country.name }}
+                                    </option>
+                                </select>
+                                <!--Validación -> campo requerido-->
+                                <div *ngIf="shippingAddressCountry.invalid && (shippingAddressCountry.dirty || shippingAddressCountry.touched)"
+                                    class="alert alert-danger mt-1">
+                                    <div
+                                        *ngIf="shippingAddressCountry.errors.required || shippingAddressCountry.errors.notOnlyWhiteSpace">
+                                        Country is required.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-2"><label>Street</label></div>
+                        <div class="col-md-9">
+                            <div class="input-space">
+                                <input formControlName="street" type="text">
+                                <!-- validator method dirty=did user change field value, touched=did user change fields -->
+                                <!--Errores de validación-->
+                                <!--
+                                        * invalid -> Hace referencia a si las validaciones fallaron.
+                                        * notOnlyWhiteSpace -> Método creado específicamente para corroborar que no se ingresen solo espacios vacíos.
+                                        * dirty -> Hace referencia a si el usuario cambio el valor del campo de texto.
+                                        * touched -> Hace referencia a si el campo perdió foco.
+                                    -->
+                                <div *ngIf="shippingAddressStret.invalid && (shippingAddressStret.dirty || shippingAddressStret.touched)"
+                                    class="alert alert-danger mt-1">
+                                    <div
+                                        *ngIf="shippingAddressStret.errors.required || shippingAddressStret.errors.notOnlyWhitespace">
+                                        Street is required
+                                    </div>
+                                    <div *ngIf="shippingAddressStret.errors.minlength">
+                                        Street must be at least 2 characters long
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-2"><label>City</label></div>
+                        <div class="col-md-9">
+                            <div class="input-space">
+                                <input formControlName="city" type="text">
+                                <!-- validator method dirty=did user change field value, touched=did user change fields -->
+                                <!--Errores de validación-->
+                                <!--
+                                        * invalid -> Hace referencia a si las validaciones fallaron.
+                                        * notOnlyWhiteSpace -> Método creado específicamente para corroborar que no se ingresen solo espacios vacíos.
+                                        * dirty -> Hace referencia a si el usuario cambio el valor del campo de texto.
+                                        * touched -> Hace referencia a si el campo perdió foco.
+                                    -->
+                                <div *ngIf="shippingAddressCity.invalid && (shippingAddressCity.dirty || shippingAddressCity.touched)"
+                                    class="alert alert-danger mt-1">
+                                    <div
+                                        *ngIf="shippingAddressCity.errors.required || shippingAddressCity.errors.notOnlyWhitespace">
+                                        City is required
+                                    </div>
+                                    <div *ngIf="shippingAddressCity.errors.minlength">
+                                        City must be at least 2 characters long
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-2"><label>State</label></div>
+                        <div class="col-md-9">
+                            <div class="input-space">
+                                <select formControlName="state">
+                                    <option *ngFor="let state of shippingAddressStates" [ngValue]="state">
+                                        {{ state.name }}
+                                    </option>
+                                </select>
+                                <!--Validación -> campo requerido-->
+                                <div *ngIf="shippingAddressStateZ.invalid && (shippingAddressStateZ.dirty || shippingAddressStateZ.touched)"
+                                    class="alert alert-danger mt-1">
+                                    <div
+                                        *ngIf="shippingAddressStateZ.errors.required || shippingAddressStateZ.errors.notOnlyWhiteSpace">
+                                        State is required.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-2"><label>Zip Code</label></div>
+                        <div class="col-md-9">
+                            <div class="input-space">
+                                <input formControlName="zipCode" type="text">
+                                <!-- validator method dirty=did user change field value, touched=did user change fields -->
+                                <!--Errores de validación-->
+                                <!--
+                                        * invalid -> Hace referencia a si las validaciones fallaron.
+                                        * notOnlyWhiteSpace -> Método creado específicamente para corroborar que no se ingresen solo espacios vacíos.
+                                        * dirty -> Hace referencia a si el usuario cambio el valor del campo de texto.
+                                        * touched -> Hace referencia a si el campo perdió foco.
+                                    -->
+                                <div *ngIf="shippingAddressZipCode.invalid && (shippingAddressZipCode.dirty || shippingAddressZipCode.touched)"
+                                    class="alert alert-danger mt-1">
+                                    <div
+                                        *ngIf="shippingAddressZipCode.errors.required || shippingAddressZipCode.errors.notOnlyWhitespace">
+                                        Zip Code is required
+                                    </div>
+                                    <div *ngIf="shippingAddressZipCode.errors.minlength">
+                                        Zip Code must be at least 2 characters long
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--Si tu 'Shipping Address' es igual a tu 'Billing Address' copiar el contenido aquí.-->
+                <!--Para lograr esto, utilizaremos un 'check box'-->
+                <div class="input-space">
+                    <label class="au-checkbox">
+                        <input type="checkbox" (change)="copyShippingAddressToBillingAddress($event)">
+                        <span class="au-checkmark"></span> Billing Address same as Shipping Address
+                    </label>
+                </div>
+                <!--Form group para el 'Billing Address'-->
+                <div formGroupName="billingAddress" class="form-area">
+                    <h3>Billing Address</h3>
+                    <div class="row">
+                        <div class="col-md-2"><label>Country</label></div>
+                        <div class="col-md-9">
+                            <div class="input-space">
+                                <select formControlName="country" (change)="populateStates('billingAddress')">
+                                    <!-- ngValue is the country code used by the States dropdown method -->
+                                    <option *ngFor="let country of countries" [ngValue]="country">
+                                        {{ country.name }}
+                                    </option>
+                                </select>
+                                <!--Validación -> campo requerido-->
+                                <div *ngIf="billingAddressCountry.invalid && (billingAddressCountry.dirty || billingAddressCountry.touched)"
+                                    class="alert alert-danger mt-1">
+                                    <div
+                                        *ngIf="billingAddressCountry.errors.required || billingAddressCountry.errors.notOnlyWhiteSpace">
+                                        Country is required.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-2"><label>Street</label></div>
+                        <div class="col-md-9">
+                            <div class="input-space">
+                                <input formControlName="street" type="text">
+                                <!-- validator method dirty=did user change field value, touched=did user change fields -->
+                                <!--Errores de validación-->
+                                <!--
+                                        * invalid -> Hace referencia a si las validaciones fallaron.
+                                        * notOnlyWhiteSpace -> Método creado específicamente para corroborar que no se ingresen solo espacios vacíos.
+                                        * dirty -> Hace referencia a si el usuario cambio el valor del campo de texto.
+                                        * touched -> Hace referencia a si el campo perdió foco.
+                                    -->
+                                <div *ngIf="billingAddressStreet.invalid && (billingAddressStreet.dirty || billingAddressStreet.touched)"
+                                    class="alert alert-danger mt-1">
+                                    <div
+                                        *ngIf="billingAddressStreet.errors.required || billingAddressStreet.errors.notOnlyWhitespace">
+                                        Street is required
+                                    </div>
+                                    <div *ngIf="billingAddressStreet.errors.minlength">
+                                        Street must be at least 2 characters long
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-2"><label>City</label></div>
+                        <div class="col-md-9">
+                            <div class="input-space">
+                                <input formControlName="city" type="text">
+                                <!-- validator method dirty=did user change field value, touched=did user change fields -->
+                                <!--Errores de validación-->
+                                <!--
+                                        * invalid -> Hace referencia a si las validaciones fallaron.
+                                        * notOnlyWhiteSpace -> Método creado específicamente para corroborar que no se ingresen solo espacios vacíos.
+                                        * dirty -> Hace referencia a si el usuario cambio el valor del campo de texto.
+                                        * touched -> Hace referencia a si el campo perdió foco.
+                                    -->
+                                <div *ngIf="billingAddressCity.invalid && (billingAddressCity.dirty || billingAddressCity.touched)"
+                                    class="alert alert-danger mt-1">
+                                    <div
+                                        *ngIf="billingAddressCity.errors.required || billingAddressCity.errors.notOnlyWhitespace">
+                                        City is required
+                                    </div>
+                                    <div *ngIf="billingAddressCity.errors.minlength">
+                                        City must be at least 2 characters long
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-2"><label>State</label></div>
+                        <div class="col-md-9">
+                            <div class="input-space">
+                                <select formControlName="state">
+                                    <option *ngFor="let state of billingAddressStates" [ngValue]="state">
+                                        {{ state.name }}
+                                    </option>
+                                </select>
+                                <!--Validación -> campo requerido-->
+                                <div *ngIf="billingAddressState.invalid && (billingAddressState.dirty || billingAddressState.touched)"
+                                    class="alert alert-danger mt-1">
+                                    <div
+                                        *ngIf="billingAddressState.errors.required || billingAddressState.errors.notOnlyWhiteSpace">
+                                        State is required.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-2"><label>Zip Code</label></div>
+                        <div class="col-md-9">
+                            <div class="input-space">
+                                <input formControlName="zipCode" type="text">
+                                <!-- validator method dirty=did user change field value, touched=did user change fields -->
+                                <!--Errores de validación-->
+                                <!--
+                                        * invalid -> Hace referencia a si las validaciones fallaron.
+                                        * notOnlyWhiteSpace -> Método creado específicamente para corroborar que no se ingresen solo espacios vacíos.
+                                        * dirty -> Hace referencia a si el usuario cambio el valor del campo de texto.
+                                        * touched -> Hace referencia a si el campo perdió foco.
+                                    -->
+                                <div *ngIf="billingAddressZipCode.invalid && (billingAddressZipCode.dirty || billingAddressZipCode.touched)"
+                                    class="alert alert-danger mt-1">
+                                    <div
+                                        *ngIf="billingAddressZipCode.errors.required || billingAddressZipCode.errors.notOnlyWhitespace">
+                                        Zip Code is required
+                                    </div>
+                                    <div *ngIf="billingAddressZipCode.errors.minlength">
+                                        Zip Code must be at least 2 characters long
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--Form group para 'creditCard'-->
+                <div formGroupName="creditCard" class="form-area">
+                    <h3>Credit Card</h3>
+                    <div class="row">
+                        <div class="col-md-2"><label>Card Type</label></div>
+                        <div class="col-md-9">
+                            <div class="input-space">
+                                <select formControlName="cardType">
+                                    <option>Visa</option>
+                                    <option>Mastercard</option>
+                                    <option>American Express</option>
+                                </select>
+                                <!--Validación -> campo requerido-->
+                                <div *ngIf="cardType.invalid && (cardType.dirty || cardType.touched)"
+                                    class="alert alert-danger mt-1">
+                                    <div *ngIf="cardType.errors.required || cardType.errors.notOnlyWhiteSpace">
+                                        Card Type is required.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-2"><label>Name on Card</label></div>
+                        <div class="col-md-9">
+                            <div class="input-space">
+                                <input formControlName="nameOnCard" type="text">
+                                <!-- validator method dirty=did user change field value, touched=did user change fields -->
+                                <!--Errores de validación-->
+                                <!--
+                                        * invalid -> Hace referencia a si las validaciones fallaron.
+                                        * notOnlyWhiteSpace -> Método creado específicamente para corroborar que no se ingresen solo espacios vacíos.
+                                        * dirty -> Hace referencia a si el usuario cambio el valor del campo de texto.
+                                        * touched -> Hace referencia a si el campo perdió foco.
+                                    -->
+                                <div *ngIf="nameOnCard.invalid && (nameOnCard.dirty || nameOnCard.touched)"
+                                    class="alert alert-danger mt-1">
+                                    <div *ngIf="nameOnCard.errors.required || nameOnCard.errors.notOnlyWhitespace">
+                                        Name on Card is required
+                                    </div>
+                                    <div *ngIf="nameOnCard.errors.minlength">
+                                        Name on Card must be at least 2 characters long
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                        <div class="row">
+                            <div class="col-md-2"><label>Card Number</label></div>
+                            <div class="col-md-9">
+                                <div class="input-space">
+                                    <input formControlName="cardNumber" type="text">
+                                    <!-- validator method dirty=did user change field value, touched=did user change fields -->
+                                    <!--Errores de validación-->
+                                    <!--
+                                        * invalid -> Hace referencia a si las validaciones fallaron.
+                                        * notOnlyWhiteSpace -> Hace referencia a que no solo se puede llenar el campo de espacios en blanco.
+                                        * dirty -> Hace referencia a si el usuario cambio el valor del campo de texto.
+                                        * touched -> Hace referencia a si el campo perdió foco.
+                                    -->
+                                    <div *ngIf="cardNumber.invalid && (cardNumber.dirty || cardNumber.touched)"
+                                        class="alert alert-danger mt-1">
+                                        <div *ngIf="cardNumber.errors.required || cardNumber.errors.notOnlyWhiteSpace">
+                                            Card number is required
+                                        </div>
+                                        <div *ngIf="cardNumber.errors.pattern">
+                                            Card number must be 16 digits long.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-2"><label>Security Code</label></div>
+                            <div class="col-md-9">
+                                <div class="input-space">
+                                    <input formControlName="securityCode" type="text">
+                                    <!-- validator method dirty=did user change field value, touched=did user change fields -->
+                                    <!--Errores de validación-->
+                                    <!--
+                                        * invalid -> Hace referencia a si las validaciones fallaron.
+                                        * notOnlyWhiteSpace -> Hace referencia a que no solo se puede llenar el campo de espacios en blanco.
+                                        * dirty -> Hace referencia a si el usuario cambio el valor del campo de texto.
+                                        * touched -> Hace referencia a si el campo perdió foco.
+                                    -->
+                                    <div *ngIf="securityCode.invalid && (securityCode.dirty || securityCode.touched)"
+                                        class="alert alert-danger mt-1">
+                                        <div
+                                            *ngIf="securityCode.errors.required || securityCode.errors.notOnlyWhiteSpace">
+                                            Security code is required
+                                        </div>
+                                        <div *ngIf="securityCode.errors.pattern">
+                                            Security code must be 3 digits long.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!--
+                        Es importante aclarar que 'Expiration Month' es dependiende de 'Expiration Year'.
+                        Por lo tanto, si seleccionamos el año actual, se deben mostrar los meses restantes.
+                        Si seleccionamos años futuros, entonces mostrar todos los meses.
+                    -->
+                        <div class="row">
+                            <div class="col-md-2"><label>Expiration Month</label></div>
+                            <div class="col-md-9">
+                                <div class="input-space">
+                                    <select formControlName="expirationMonth">
+                                        <option *ngFor="let month of creditCardMonths">
+                                            {{ month }}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-2"><label>Expiration Year</label></div>
+                            <div class="col-md-9">
+                                <div class="input-space">
+                                    <!--  event binding -->
+                                    <select formControlName="expirationYear" (change)="handleMonthsYears()">
+                                        <option *ngFor="let year of creditCardYears">
+                                            {{ year }}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--El resúmen del pedido/cuenta-->
+                    <div class="form-area">
+                        <h3>Review Your Order</h3>
+                        <p>Total Quantity: {{totalQuantity}}</p>
+                        <p>Shipping: FREE</p>
+                        <p>Total Price: {{totalPrice | currency: 'USD'}}</p>
+                    </div>
+                    <!--botón del tipo 'submit'-->
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-info">Purchase</button>
+                    </div>
+            </form>
+        </div>
+    </div>
+</div>

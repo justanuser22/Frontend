@@ -1,0 +1,9 @@
+<div class="cart-area d-n">
+    <!--Link para acceder a la lista de Productos cargados en nuestro Carro.-->
+    <a routerLink="/cart-details">
+        <div class="total">{{totalPrice | currency: 'USD'}}
+            <span>{{totalQuantity}}</span>
+         </div>
+          <i class="fa fa-shopping-cart" aria-hidden="true"></i>
+    </a>
+</div>

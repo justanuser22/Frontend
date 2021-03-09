@@ -1,0 +1,54 @@
+<div class="main-content">
+    <div class="section-content section-content-p30">
+        <div class="container-fluid">
+            <div class="row">
+                <!-- Recorre la colección de productos -->
+                <div *ngFor="let tempProduct of products" class="col-md-3">
+                    <div class="product-box">
+                        <a routerLink="/product/{{tempProduct.id}}">
+                            <img src="{{tempProduct.imageUrl}}" class="img-responsive" />
+                        </a>
+                        <a routerLink="/product/{{tempProduct.id}}">
+                            <h1>{{tempProduct.name}}</h1>
+                        </a>
+                        <div class="price">{{tempProduct.unitPrice | currency: 'USD'}}</div>
+                        <button (click)="addToCart(tempProduct)" class="btn btn-primary btn-sm">Add to cart</button>
+                    </div>
+                </div>
+                <!--Si no se encuentran productos que matcheen con la palabra clave, desplegar un mensaje-->
+                <div *ngIf="products?.length == 0" class="alert alert-warning col-md-12" role="alert">
+                    No products found.
+                </div>
+            </div>
+            <!--Comienza la paginación-->
+            <div class="footer-pagination">
+                <div class="row">
+                    <div class="col-md-6"></div>
+                    <div class="col-md-6">
+                        <div class="row">
+                            <div class="col-md-9" style="padding-left: 10%;">
+                                <!--Uniendo los parámetros de ngb-pagination con los de product-list.component.ts-->
+                                <ngb-pagination [(page)]="thePageNumber" [pageSize]="thePageSize"
+                                    [collectionSize]="theTotalElements" [maxSize]="5" [boundaryLinks]="true" (pageChange)="listProducts()">
+
+                                </ngb-pagination>
+                            </div>
+                            <!--Lista desplegable para elegir la cantidad de elementos que se desean mostrar-->
+                            <div class="col-md-3 mt-2" style="text-align: right">
+                                <span class="mr-2">Page Size:</span>
+                                <select (change)="updatePageSize($event.target.value)">
+                                    <option>2</option>
+                                    <option selected="true">5</option>
+                                    <option>10</option>
+                                    <option>20</option>
+                                    <option>50</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--Termina la paginación-->
+        </div>
+    </div>
+</div>
